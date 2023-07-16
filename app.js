@@ -19,11 +19,11 @@ app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.use(express.static('public')) // 要有這個才讀得到css
 app.set('view engine', 'hbs')
 
-// app.use(session({
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: true
-// }))
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+}))
 
 // usePassport(app) // 呼叫 Passport 函式並傳入 app，這條要寫在路由之前
 // app.use(flash())
