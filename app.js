@@ -1,45 +1,46 @@
-// 加入這段 code, 僅在非正式環境時, 使用 dotenv
+const express = require('express')
+const exphbs = require('express-handlebars');
+const bodyParser = require('body-parser')
+const session = require('express-session')
+// const usePassport = require('./config/passport') // 載入設定檔，要寫在 express-session 以後
+const flash = require('connect-flash')
+const methodOverride = require('method-override')
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
 
-// 載入 express 並建構應用程式伺服器
-const express = require('express')
-const app = express()
-const mongoose = require('mongoose') // 載入 mongoose
-const exphbs = require('express-handlebars');
-const Restaurant = require('./models/Restaurant')
-const bodyParser = require('body-parser')
 const routes = require('./routes') // 引用路由器
-const methodOverride = require('method-override') 
+require('./config/mongoose')
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }) // 設定連線到 mongoDB
+const app = express()
+const PORT = process.env.PORT || 3000
 
-// 用 app.use 規定每一筆請求都需要透過 body-parser 進行前置處理
-app.use(bodyParser.urlencoded({ extended: true }))
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
+app.use(express.static('public')) // 要有這個才讀得到css
 app.set('view engine', 'hbs')
+
+// app.use(session({
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: true
+// }))
+
+// usePassport(app) // 呼叫 Passport 函式並傳入 app，這條要寫在路由之前
+// app.use(flash())
+// app.use((req, res, next) => {
+//     // 你可以在這裡 console.log(req.user) 等資訊來觀察
+//     res.locals.isAuthenticated = req.isAuthenticated()
+//     res.locals.user = req.user
+//     res.locals.success_msg = req.flash('success_msg')  // 設定 success_msg 訊息
+//     res.locals.warning_msg = req.flash('warning_msg')  // 設定 warning_msg 訊息
+//     next()
+// })
+
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
-app.use(routes) // 將 request 導入路由器
 
-// 取得資料庫連線狀態
-const db = mongoose.connection
-// 連線異常
-db.on('error', () => {
-    console.log('mongodb error!')
-})
-// 連線成功
-db.once('open', () => {
-    console.log('mongodb connected!')
-})
+app.use(routes)
 
-// require packages used in the project
-const port = 3003
-
-app.use(express.static('public'))
-
-
-// start and listen on the Express server
-app.listen(port, () => {
-    console.log(`Express is listening on localhost:${port}`)
+app.listen(PORT, () => {
+    console.log(`App is running on http://localhost:${PORT}`)
 })
