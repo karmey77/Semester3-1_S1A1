@@ -21,8 +21,11 @@ router.get('/register', (req, res) => {
 router.post('/register', (req, res) => {
     const { name, email, password, confirmPassword } = req.body
     const errors = []
-    if (!name || !email || !password || !confirmPassword) {
-        errors.push({ message: '所有欄位都是必填。' })
+    if (!email) {
+        errors.push({ message: '電子郵件欄位為必填。' })
+    }
+    if (!password || !confirmPassword) {
+        errors.push({ message: '密碼欄位為必填。' })
     }
     if (password !== confirmPassword) {
         errors.push({ message: '密碼與確認密碼不相符！' })
