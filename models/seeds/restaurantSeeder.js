@@ -34,17 +34,17 @@ db.once('open', () => {
                 if (SEED_USER.name === 'user1') {
                     const restaurantList = restaurantSeed.results.slice(0, 3)
                     return Promise.all(
-                        restaurantList.forEach(restaurant => {
+                        restaurantList.map(restaurant => {
                             restaurant["userId"] = userId
-                            Restaurant.create(restaurant)
+                            return Restaurant.create(restaurant)
                         })
                     )
                 } else {
                     const restaurantList = restaurantSeed.results.slice(3, 6)
                     return Promise.all(
-                        restaurantList.forEach(restaurant => {
+                        restaurantList.map(restaurant => {
                             restaurant["userId"] = userId
-                            Restaurant.create(restaurant)
+                            return Restaurant.create(restaurant)
                         })
                     )
                 }
